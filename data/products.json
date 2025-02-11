@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "title": "Fideos",
+    "description": "Pasta italiana",
+    "code": "FD123",
+    "price": 375,
+    "stock": 100,
+    "category": "Alimentos",
+    "thumbnails": [],
+    "status": true
+  },
+  {
+    "id": 2,
+    "title": "Queso Rallado",
+    "description": "Queso parmesano",
+    "code": "QR456",
+    "price": 1500,
+    "stock": 50,
+    "category": "Lácteos",
+    "thumbnails": [],
+    "status": true
+  },
+  {
+    "id": 3,
+    "title": "Servilletas",
+    "description": "Paquete de 100 unidades",
+    "code": "SV789",
+    "price": 750,
+    "stock": 200,
+    "category": "Hogar",
+    "thumbnails": [],
+    "status": true
+  }
+]
