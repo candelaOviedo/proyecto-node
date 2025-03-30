@@ -1,19 +1,11 @@
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Home - Productos</title>
-  </head>
-  <body>
-    <h1>Lista de Productos</h1>
-    <ul>
-      {{#each products}}
-        <li>
-          <strong>{{this.title}}</strong>
-          -
-          {{this.description}}
-          - ${{this.price}}
-        </li>
-      {{/each}}
-    </ul>
-  </body>
-</html>
+<h1>Lista de Productos</h1>
+<ul>
+  {{#each products}}
+    <li>
+      <strong>{{this.title}}</strong>
+      -
+      {{this.description}}
+      - ${{this.price}}
+    </li>
+  {{/each}}
+</ul>

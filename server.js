@@ -1,21 +1,36 @@
 const express = require("express");
-const app = express();
+const mongoose = require("mongoose");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-const exphbs = require("express-handlebars");
+const { engine } = require('express-handlebars');
 const path = require("path");
+
+const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-
+// Middleware para parsear JSON y URL-encoded
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.engine("handlebars", exphbs.engine());
-app.set("view engine", "handlebars");
-app.set("views", path.join(__dirname, "views"));
-app.use(express.static(path.join(__dirname, "public")));
 
+// Configuración de Handlebars
+app.engine('handlebars', engine({
+  extname: '.handlebars',
+  defaultLayout: 'main', // Asegúrate de que 'main.handlebars' exista en tu carpeta de layouts
+}));
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'views'));
 
+// Conexión a MongoDB
+const mongoURI = 'mongodb://localhost:27017/node-coder';
+mongoose.connect(mongoURI)
+  .then(() => console.log('Conexión a MongoDB establecida'))
+  .catch((error) => {
+    console.error('Error de conexión a MongoDB:', error);
+    process.exit(1);
+  });
+
+// Rutas
 const productsRouter = require("./routes/productsRouter");
 app.use("/api/products", productsRouter);
 
@@ -25,39 +40,7 @@ app.use("/api/carts", cartsRouter);
 const viewsRouter = require("./routes/routerViews");
 app.use("/", viewsRouter);
 
-const { getProducts, saveProductsToFile } = require("./data/productsData");
-app.set("socketio", io);
-
-io.on("connection", async (socket) => {
-  console.log("Nuevo cliente conectado");
-
-  // Obtener productos actuales y enviarlos al cliente
-  let products = await getProducts();
-  socket.emit("updateProducts", products);
-
-  socket.on("newProduct", async (productData) => {
-    try {
-      let products = await getProducts(); // Leer productos desde el archivo
-      const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-
-      const newProduct = {
-        id: newId,
-        ...productData,
-        thumbnails: [],
-        status: true,
-      };
-
-      products.push(newProduct);
-      await saveProductsToFile(products); // Guardar los productos actualizados en el JSON
-
-      io.emit("updateProducts", products);
-    } catch (error) {
-      console.error("Error al agregar producto:", error);
-    }
-  });
-});
-
-// Iniciar el servidor en el puerto 8080
+// Inicialización del servidor
 const PORT = 8080;
 httpServer.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

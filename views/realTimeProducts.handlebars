@@ -1,56 +1,38 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Real Time Products</title>
-</head>
-<body>
-  <h1>Productos en Tiempo Real</h1>
-  <ul id="productsList">
-    {{#each products}}
-      <li id="prod-{{this.id}}">
-        <strong>{{this.title}}</strong> - {{this.description}} - ${{this.price}}
-      </li>
-    {{/each}}
-  </ul>
+<h1>Productos en Tiempo Real</h1>
+<ul id="productsList">
+  {{#each products}}
+    <li id="prod-{{this.id}}">
+      <strong>{{this.title}}</strong>
+      -
+      {{this.description}}
+      - ${{this.price}}
+    </li>
+  {{/each}}
+</ul>
 
-  <!-- Formulario para agregar un producto con websockets -->
-  <h2>Agregar Producto</h2>
-  <form id="productForm">
-    <input type="text" name="title" placeholder="Título" required>
-    <input type="text" name="description" placeholder="Descripción" required>
-    <input type="text" name="code" placeholder="Código" required>
-    <input type="number" name="price" placeholder="Precio" required>
-    <input type="number" name="stock" placeholder="Stock" required>
-    <input type="text" name="category" placeholder="Categoría" required>
-    <button type="submit">Agregar Producto</button>
-  </form>
+<!-- Formulario para agregar un producto con websockets -->
+<h2>Agregar Producto</h2>
+<form id="productForm">
+  <input type="text" name="title" placeholder="Título" required />
+  <input type="text" name="description" placeholder="Descripción" required />
+  <input type="text" name="code" placeholder="Código" required />
+  <input type="number" name="price" placeholder="Precio" required />
+  <input type="number" name="stock" placeholder="Stock" required />
+  <input type="text" name="category" placeholder="Categoría" required />
+  <button type="submit">Agregar Producto</button>
+</form>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    socket.on('updateProducts', (products) => {
-      const list = document.getElementById('productsList');
-      list.innerHTML = '';
-      products.forEach(product => {
-        const li = document.createElement('li');
-        li.id = 'prod-' + product.id;
-        li.innerHTML = `<strong>${product.title}</strong> - ${product.description} - $${product.price}`;
-        list.appendChild(li);
-      });
-    });
-
-    // Enviar nuevo producto a través del formulario con websockets
-    document.getElementById('productForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const product = {};
-      formData.forEach((value, key) => {
-        product[key] = (key === "price" || key === "stock") ? Number(value) : value;
-      });
-      socket.emit('newProduct', product);
-      e.target.reset();
-    });
-  </script>
-</body>
-</html>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io(); socket.on('updateProducts', (products) => { const list =
+  document.getElementById('productsList'); list.innerHTML = '';
+  products.forEach(product => { const li = document.createElement('li'); li.id =
+  'prod-' + product.id; li.innerHTML = `<strong>${product.title}</strong> -
+  ${product.description} - $${product.price}`; list.appendChild(li); }); }); //
+  Enviar nuevo producto a través del formulario con websockets
+  document.getElementById('productForm').addEventListener('submit', (e) => {
+  e.preventDefault(); const formData = new FormData(e.target); const product =
+  {}; formData.forEach((value, key) => { product[key] = (key === "price" || key
+  === "stock") ? Number(value) : value; }); socket.emit('newProduct', product);
+  e.target.reset(); });
+</script>
